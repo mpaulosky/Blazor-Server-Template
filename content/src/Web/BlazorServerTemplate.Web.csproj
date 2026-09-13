@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Tailwind CSS: built via the standalone CLI binary, no Node/npm required. -->
+    <TailwindCliVersion>4.3.3</TailwindCliVersion>
+    <TailwindCliDir>$(MSBuildProjectDirectory)/.tailwindcss</TailwindCliDir>
+    <TailwindCliExe Condition="'$(OS)' == 'Windows_NT'">$(TailwindCliDir)/tailwindcss.exe</TailwindCliExe>
+    <TailwindCliExe Condition="'$(OS)' != 'Windows_NT'">$(TailwindCliDir)/tailwindcss</TailwindCliExe>
+    <TailwindInputCss>$(MSBuildProjectDirectory)/Styles/app.css</TailwindInputCss>
+    <TailwindOutputCss>$(MSBuildProjectDirectory)/wwwroot/app.css</TailwindOutputCss>
+  </PropertyGroup>
+
+  <Target Name="EnsurePaletteCss" BeforeTargets="TailwindDownloadCli">
+    <!-- Local iteration on the template's own source (outside `dotnet new`) needs a default palette;
+         `dotnet new` instantiation renames the chosen Palettes/*.css to this path itself, so this is a no-op then. -->
+    <Copy SourceFiles="$(MSBuildProjectDirectory)/Palettes/Blue.css" DestinationFiles="$(MSBuildProjectDirectory)/Styles/palette.css" Condition="!Exists('$(MSBuildProjectDirectory)/Styles/palette.css')" />
+  </Target>
+
+  <Target Name="TailwindDownloadCli" BeforeTargets="TailwindBuild" Condition="!Exists('$(TailwindCliExe)')">
+    <Exec Command="bash &quot;$(MSBuildProjectDirectory)/../../build/download-tailwind-cli.sh&quot; &quot;$(TailwindCliVersion)&quot; &quot;$(TailwindCliDir)&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)/../../build/download-tailwind-cli.ps1&quot; -Version &quot;$(TailwindCliVersion)&quot; -Destination &quot;$(TailwindCliDir)&quot;" Condition="'$(OS)' == 'Windows_NT'" />
+  </Target>
+
+  <Target Name="TailwindBuild" BeforeTargets="BeforeBuild" Inputs="$(TailwindInputCss);$(MSBuildProjectDirectory)/Styles/palette.css" Outputs="$(TailwindOutputCss)">
+    <Exec Command="&quot;$(TailwindCliExe)&quot; -i &quot;$(TailwindInputCss)&quot; -o &quot;$(TailwindOutputCss)&quot; --minify" />
+  </Target>
+
+</Project>

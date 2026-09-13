@@ -1,0 +1,37 @@
+@page "/profile"
+@attribute [Authorize]
+@using System.Security.Claims
+
+<PageTitle>Profile</PageTitle>
+
+<div class="space-y-4">
+	<h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Profile</h1>
+
+	<AuthorizeView>
+		<Authorized>
+			<p class="text-slate-600 dark:text-slate-300">
+				Signed in as <strong>@context.User.Identity?.Name</strong>.
+			</p>
+
+			<div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+				<table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-800">
+					<thead class="bg-slate-50 dark:bg-slate-900">
+						<tr>
+							<th class="px-4 py-2 text-left font-medium text-slate-600 dark:text-slate-300">Claim</th>
+							<th class="px-4 py-2 text-left font-medium text-slate-600 dark:text-slate-300">Value</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+						@foreach (var claim in context.User.Claims)
+						{
+							<tr>
+								<td class="px-4 py-2 text-slate-500 dark:text-slate-400">@claim.Type</td>
+								<td class="px-4 py-2 text-slate-900 dark:text-slate-100">@claim.Value</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</Authorized>
+	</AuthorizeView>
+</div>

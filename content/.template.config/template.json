@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "mpaulosky",
+  "classifications": [ "Web", "Blazor", "Server", "Tailwind", "Auth0" ],
+  "identity": "Mpaulosky.BlazorServerTemplate",
+  "name": "Blazor Server Template",
+  "shortName": "blazorserver",
+  "sourceName": "BlazorServerTemplate",
+  "preferNameDirectory": true,
+  "symbols": {
+    "Palette": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "Blue", "description": "Blue primary palette" },
+        { "choice": "Rose", "description": "Rose primary palette" },
+        { "choice": "Violet", "description": "Violet primary palette" },
+        { "choice": "Emerald", "description": "Emerald primary palette" },
+        { "choice": "Amber", "description": "Amber primary palette" },
+        { "choice": "Slate", "description": "Slate primary palette" }
+      ],
+      "defaultValue": "Blue",
+      "description": "The color palette baked into the generated app's Tailwind CSS. Fixed at generation time; there is no in-app palette switcher (see docs/adr/0002)."
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        { "condition": "(Palette != \"Blue\")", "exclude": [ "src/Web/Palettes/Blue.css" ] },
+        { "condition": "(Palette != \"Rose\")", "exclude": [ "src/Web/Palettes/Rose.css" ] },
+        { "condition": "(Palette != \"Violet\")", "exclude": [ "src/Web/Palettes/Violet.css" ] },
+        { "condition": "(Palette != \"Emerald\")", "exclude": [ "src/Web/Palettes/Emerald.css" ] },
+        { "condition": "(Palette != \"Amber\")", "exclude": [ "src/Web/Palettes/Amber.css" ] },
+        { "condition": "(Palette != \"Slate\")", "exclude": [ "src/Web/Palettes/Slate.css" ] },
+        { "condition": "(Palette == \"Blue\")", "rename": { "src/Web/Palettes/Blue.css": "src/Web/Styles/palette.css" } },
+        { "condition": "(Palette == \"Rose\")", "rename": { "src/Web/Palettes/Rose.css": "src/Web/Styles/palette.css" } },
+        { "condition": "(Palette == \"Violet\")", "rename": { "src/Web/Palettes/Violet.css": "src/Web/Styles/palette.css" } },
+        { "condition": "(Palette == \"Emerald\")", "rename": { "src/Web/Palettes/Emerald.css": "src/Web/Styles/palette.css" } },
+        { "condition": "(Palette == \"Amber\")", "rename": { "src/Web/Palettes/Amber.css": "src/Web/Styles/palette.css" } },
+        { "condition": "(Palette == \"Slate\")", "rename": { "src/Web/Palettes/Slate.css": "src/Web/Styles/palette.css" } }
+      ],
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**",
+        "**/.tailwindcss/**",
+        "src/Web/wwwroot/app.css",
+        "src/Web/Styles/palette.css"
+      ]
+    }
+  ],
+  "primaryOutputs": [
+    { "path": "BlazorServerTemplate.slnx" }
+  ],
+  "postActions": [
+    {
+      "condition": true,
+      "description": "Restore NuGet packages",
+      "manualInstructions": [ { "text": "Run 'dotnet restore'" } ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
+}

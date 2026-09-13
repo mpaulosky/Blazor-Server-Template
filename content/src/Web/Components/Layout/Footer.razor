@@ -1,0 +1,31 @@
+@using BlazorServerTemplate.Web.Services
+@inject IReleaseInfoService ReleaseInfoService
+
+<footer class="border-t border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
+	<div class="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-6 text-sm text-slate-500 dark:text-slate-400 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
+		<span>&copy; @DateTime.UtcNow.Year BlazorServerTemplate</span>
+
+		@if (_releaseInfo is not null && (_releaseInfo.LatestReleaseTag is not null || _releaseInfo.LatestCommitSha is not null))
+		{
+			<span class="flex items-center gap-3">
+				@if (_releaseInfo.LatestReleaseTag is not null)
+				{
+					<span>Release @_releaseInfo.LatestReleaseTag</span>
+				}
+				@if (_releaseInfo.LatestCommitSha is not null)
+				{
+					<span>Commit @_releaseInfo.LatestCommitSha</span>
+				}
+			</span>
+		}
+	</div>
+</footer>
+
+@code {
+	private ReleaseInfo? _releaseInfo;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_releaseInfo = await ReleaseInfoService.GetLatestReleaseInfoAsync();
+	}
+}

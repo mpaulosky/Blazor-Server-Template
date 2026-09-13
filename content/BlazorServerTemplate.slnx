@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Web/">
+    <Project Path="src/Web/BlazorServerTemplate.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Web.Tests.Bunit/">
+    <Project Path="tests/Web.Tests.Bunit/BlazorServerTemplate.Web.Tests.Bunit.csproj" />
+  </Folder>
+  <Folder Name="/tests/Web.Tests.E2E/">
+    <Project Path="tests/Web.Tests.E2E/BlazorServerTemplate.Web.Tests.E2E.csproj" />
+  </Folder>
+  <Folder Name="/tests/Web.Tests.Unit/">
+    <Project Path="tests/Web.Tests.Unit/BlazorServerTemplate.Web.Tests.Unit.csproj" />
+  </Folder>
+</Solution>

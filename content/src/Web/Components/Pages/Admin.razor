@@ -1,0 +1,13 @@
+@page "/admin"
+@attribute [Authorize(Policy = "Admin")]
+
+<PageTitle>Admin</PageTitle>
+
+<div class="space-y-4">
+	<h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Admin</h1>
+	<p class="text-slate-600 dark:text-slate-300">
+		Only visible to Users whose Auth0 role claims include <code class="rounded bg-slate-100 px-1.5 py-0.5 dark:bg-slate-800">Admin</code>.
+		This page demonstrates the <code class="rounded bg-slate-100 px-1.5 py-0.5 dark:bg-slate-800">Admin</code> authorization policy
+		registered in <code class="rounded bg-slate-100 px-1.5 py-0.5 dark:bg-slate-800">Program.cs</code>.
+	</p>
+</div>

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageType>Template</PackageType>
+    <PackageId>Mpaulosky.BlazorServerTemplate</PackageId>
+    <Title>Blazor Server Template</Title>
+    <Authors>mpaulosky</Authors>
+    <Description>A dotnet new template for a Blazor Web App (Interactive Server) with Tailwind CSS theming, Auth0 authentication/authorization, and xUnit.v3/bUnit/Playwright test projects.</Description>
+    <PackageTags>dotnet-new;templates;blazor;tailwindcss;auth0</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>./artifacts</PackageOutputPath>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <IsPackable>true</IsPackable>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="content/**/*" Exclude="content/**/bin/**;content/**/obj/**;content/**/.tailwindcss/**;content/src/Web/wwwroot/app.css;content/src/Web/Styles/palette.css">
+      <PackagePath>content/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+    </Content>
+    <Compile Remove="**/*.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: content/global.json
+
+      - name: Restore
+        run: dotnet restore content/BlazorServerTemplate.slnx
+
+      - name: Build
+        run: dotnet build content/BlazorServerTemplate.slnx --no-restore --configuration Release
+
+      - name: Unit tests
+        run: dotnet test content/tests/Web.Tests.Unit/BlazorServerTemplate.Web.Tests.Unit.csproj --no-build --configuration Release
+
+      - name: Component tests (bUnit)
+        run: dotnet test content/tests/Web.Tests.Bunit/BlazorServerTemplate.Web.Tests.Bunit.csproj --no-build --configuration Release
+
+      - name: Install Playwright browsers
+        run: pwsh content/tests/Web.Tests.E2E/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+
+      - name: E2E tests (Playwright)
+        run: dotnet test content/tests/Web.Tests.E2E/BlazorServerTemplate.Web.Tests.E2E.csproj --no-build --configuration Release

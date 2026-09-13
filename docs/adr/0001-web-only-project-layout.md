@@ -1,0 +1,3 @@
+# Web-only project layout, no Api or Shared projects
+
+The repo's existing `CONTRIBUTING.md` boilerplate (carried over from another project) describes an `Api` + `Shared` + `Web` split. For this Blazor Web App template, we deliberately dropped that: the Server render mode means components run in-process and can call services/domain code directly, so a separate REST API project and a cross-project Shared library would add indirection with no consumer. The Template is a single `Web` project; if a future variant needs an API surface, that should be a separate, explicit decision rather than inherited boilerplate.
