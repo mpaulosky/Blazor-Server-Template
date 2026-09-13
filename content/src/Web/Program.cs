@@ -16,21 +16,36 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
 });
 
-builder.Services
+var auth0Domain = builder.Configuration["Auth0:Domain"];
+var auth0ClientId = builder.Configuration["Auth0:ClientId"];
+var auth0ClientSecret = builder.Configuration["Auth0:ClientSecret"];
+var auth0Configured = !string.IsNullOrWhiteSpace(auth0Domain)
+    && !string.IsNullOrWhiteSpace(auth0ClientId)
+    && !string.IsNullOrWhiteSpace(auth0ClientSecret);
+
+var authenticationBuilder = builder.Services
     .AddAuthentication(options =>
     {
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-        options.DefaultSignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        if (auth0Configured)
+        {
+            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            options.DefaultSignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        }
     })
-    .AddCookie()
-    .AddOpenIdConnect(options =>
-    {
-        var auth0 = builder.Configuration.GetSection("Auth0");
+    .AddCookie();
 
-        options.Authority = $"https://{auth0["Domain"]}";
-        options.ClientId = auth0["ClientId"];
-        options.ClientSecret = auth0["ClientSecret"];
+// The OIDC handler validates its options (Authority, ClientId, ...) on every request, not just
+// on challenge — an ASP.NET Core remote-auth handler must inspect every request to see whether
+// it's its own callback. Registering it with empty Auth0 config would 500 every page, including
+// public ones, so it's only added once real Auth0 credentials are configured.
+if (auth0Configured)
+{
+    authenticationBuilder.AddOpenIdConnect(options =>
+    {
+        options.Authority = $"https://{auth0Domain}";
+        options.ClientId = auth0ClientId;
+        options.ClientSecret = auth0ClientSecret;
         options.ResponseType = "code";
         options.CallbackPath = "/callback";
         options.ClaimsIssuer = "Auth0";
@@ -49,7 +64,7 @@ builder.Services
             // Auth0 has its own logout endpoint separate from the standard OIDC end-session endpoint.
             OnRedirectToIdentityProviderForSignOut = context =>
             {
-                var logoutUri = $"https://{auth0["Domain"]}/v2/logout?client_id={auth0["ClientId"]}";
+                var logoutUri = $"https://{auth0Domain}/v2/logout?client_id={auth0ClientId}";
 
                 var postLogoutUri = context.Properties.RedirectUri;
                 if (!string.IsNullOrEmpty(postLogoutUri))
@@ -69,6 +84,7 @@ builder.Services
             }
         };
     });
+}
 
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<IReleaseInfoService, GitHubReleaseInfoService>(client =>
@@ -100,16 +116,23 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.MapGet("/login", (HttpContext http, string? returnUrl) =>
-    Results.Challenge(
-        new AuthenticationProperties { RedirectUri = returnUrl ?? "/" },
-        [OpenIdConnectDefaults.AuthenticationScheme]));
+    auth0Configured
+        ? Results.Challenge(
+            new AuthenticationProperties { RedirectUri = returnUrl ?? "/" },
+            [OpenIdConnectDefaults.AuthenticationScheme])
+        : Results.Problem(
+            "Auth0 is not configured. Set Auth0:Domain, Auth0:ClientId and Auth0:ClientSecret (see appsettings.json / user-secrets).",
+            statusCode: StatusCodes.Status503ServiceUnavailable));
 
 app.MapPost("/logout", async (HttpContext http) =>
 {
     await http.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-    await http.SignOutAsync(
-        OpenIdConnectDefaults.AuthenticationScheme,
-        new AuthenticationProperties { RedirectUri = "/" });
+    if (auth0Configured)
+    {
+        await http.SignOutAsync(
+            OpenIdConnectDefaults.AuthenticationScheme,
+            new AuthenticationProperties { RedirectUri = "/" });
+    }
 });
 
 app.Run();
