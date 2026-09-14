@@ -1,0 +1,8 @@
+{
+  "name": "blazor-server-template-tooling",
+  "private": true,
+  "description": "Local dev tooling (markdownlint) for the pre-commit/pre-push hooks. Not shipped in the template or any generated app.",
+  "devDependencies": {
+    "markdownlint-cli2": "^0.23.2"
+  }
+}
