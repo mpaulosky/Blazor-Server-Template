@@ -19,11 +19,16 @@ jobs:
         with:
           global-json-file: content/global.json
 
+      - name: Setup GitVersion
+        uses: gittools/actions/gitversion/setup@v4
+        with:
+          versionSpec: "6.x"
+
       - name: Determine version
         id: gitversion
         uses: gittools/actions/gitversion/execute@v4
         with:
-          useConfigFile: true
+          configFilePath: GitVersion.yml
 
       - name: Pack template
         run: dotnet pack Mpaulosky.BlazorServerTemplate.csproj --configuration Release -p:PackageVersion=${{ steps.gitversion.outputs.semVer }} --output artifacts
