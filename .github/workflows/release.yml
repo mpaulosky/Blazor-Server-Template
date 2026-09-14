@@ -10,18 +10,18 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: content/global.json
 
       - name: Determine version
         id: gitversion
-        uses: gittools/actions/gitversion/execute@v3
+        uses: gittools/actions/gitversion/execute@v4
         with:
           useConfigFile: true
 
@@ -32,7 +32,7 @@ jobs:
         run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Tag release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.git.createRef({
