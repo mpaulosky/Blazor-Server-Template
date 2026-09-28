@@ -20,7 +20,11 @@
 
   <ItemGroup>
     <Content Include="content/**/*" Exclude="content/**/bin/**;content/**/obj/**;content/**/.tailwindcss/**;content/src/Web/wwwroot/app.css;content/src/Web/Styles/palette.css">
-      <PackagePath>content/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <!-- A folder, not a file path: NuGet appends each file's path under
+           content/ itself. A full path would make extensionless files (the
+           git hooks) look like folders, and NuGet would nest them as
+           hooks/pre-push/.github/hooks/pre-push. -->
+      <PackagePath>content/</PackagePath>
     </Content>
     <Compile Remove="**/*.cs" />
   </ItemGroup>
