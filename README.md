@@ -35,13 +35,7 @@ that a consumer builds, runs, and deploys.
 
 ## Installing the template
 
-Install directly from NuGet.org:
-
-```bash
-dotnet new install Mpaulosky.BlazorServerTemplate
-```
-
-Or install from a local clone of this repository:
+The template isn't published to NuGet.org. Install it from a local clone of this repository:
 
 ```bash
 git clone https://github.com/mpaulosky/Blazor-Server-Template.git

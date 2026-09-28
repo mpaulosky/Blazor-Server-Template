@@ -4,8 +4,9 @@ on:
   push:
     branches: [main]
 
-# The job pushes the package to NuGet with its API key and creates the
-# release tag through the API, so it needs contents: write and nothing else.
+# The job creates the release tag through the API, so it needs contents: write
+# and nothing else. The template isn't published to NuGet: packing it here
+# only checks that it still packages.
 permissions:
   contents: write
 
@@ -38,9 +39,6 @@ jobs:
 
       - name: Pack template
         run: dotnet pack Mpaulosky.BlazorServerTemplate.csproj --configuration Release -p:PackageVersion=${{ steps.gitversion.outputs.semVer }} --output artifacts
-
-      - name: Push to NuGet.org
-        run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Tag release
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9
