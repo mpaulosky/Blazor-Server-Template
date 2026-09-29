@@ -71,7 +71,7 @@ updates:
         patterns:
           - "*"
 
-  # Maintain the root npm packages (dev tooling: markdownlint)
+  # Maintain the root pnpm packages (dev tooling: markdownlint)
   - package-ecosystem: "npm"
     directory: "/"
     target-branch: "main"
