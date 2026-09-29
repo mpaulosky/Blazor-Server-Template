@@ -1,0 +1,5 @@
+---
+# Pins a patched smol-toml under markdownlint-cli2 (was an npm "overrides"
+# entry in package.json).
+overrides:
+  smol-toml: ^1.7.1
